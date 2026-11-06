@@ -1,6 +1,7 @@
 
 import streamlit as st
 from moon_timeline import show_moon_timeline
+from mars_timeline import show_mars_timeline
 
 st.set_page_config(
     page_title="SPACE LEGACY",
@@ -360,7 +361,9 @@ elif st.session_state.page == "detail":
         <div class="detail-heading">{t["mars_detail"]}</div>
         <div class="detail-text">{t["mars_text"]}</div>
         """, unsafe_allow_html=True)
-
+        
+        show_mars_timeline(st.session_state.language)
+    
     else:
         st.session_state.page = "home"
         st.rerun()
