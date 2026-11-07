@@ -1,7 +1,7 @@
-
 import streamlit as st
 from moon_timeline import show_moon_timeline
 from mars_timeline import show_mars_timeline
+from archive_timeline import show_archive_timeline
 
 st.set_page_config(
     page_title="SPACE LEGACY",
@@ -35,15 +35,15 @@ translations = {
         "section": "HÀNH TRÌNH KHÁM PHÁ",
         "moon_title": "MẶT TRĂNG",
         "moon_desc": "Khám phá những thiết bị NASA từng gửi lên Mặt Trăng và những dấu tích chúng để lại.",
-        "archive_title": "KHO LƯU TRỮ",
-        "archive_desc": "Tìm hiểu những cỗ máy, thiết bị và sứ mệnh đã góp phần mở rộng hiểu biết của nhân loại.",
+        "archive_title": "KHO TRỮ",
+        "archive_desc": "Tìm hiểu những cỗ máy, công nghệ và thiết bị đã giúp nhân loại chinh phục những giới hạn của vũ trụ.",
         "mars_title": "SAO HỎA",
         "mars_desc": "Khám phá những robot thám hiểm và dấu tích công nghệ trên hành tinh đỏ.",
         "back": "← QUAY LẠI TRANG CHỦ",
         "moon_detail": "NHỮNG DẤU TÍCH TRÊN MẶT TRĂNG",
         "moon_text": "Mặt Trăng lưu giữ nhiều dấu tích của những sứ mệnh không gian. Từ các tàu thăm dò va chạm xuống bề mặt đến những thiết bị hạ cánh, mỗi thiết bị đều kể một câu chuyện về hành trình khám phá của nhân loại.",
-        "archive_detail": "KHO LƯU TRỮ CÔNG NGHỆ VŨ TRỤ",
-        "archive_text": "Đằng sau mỗi sứ mệnh không gian là những thiết bị được thiết kế để thực hiện một nhiệm vụ đặc biệt. Một số vẫn tiếp tục hoạt động, trong khi những thiết bị khác đã hoàn thành nhiệm vụ và trở thành di sản công nghệ.",
+        "archive_detail": "KHO TRỮ CÔNG NGHỆ VŨ TRỤ",
+        "archive_text": "Kho Trữ là nơi lưu giữ kiến thức về công nghệ khám phá không gian, bổ sung cho hai phần Mặt Trăng và Sao Hỏa.",
         "mars_detail": "NHỮNG DẤU TÍCH TRÊN SAO HỎA",
         "mars_text": "Sao Hỏa đã trở thành nơi hoạt động của nhiều robot thám hiểm. Những thiết bị này giúp con người nghiên cứu địa hình, khí hậu và lịch sử của hành tinh đỏ.",
         "footer": "DI SẢN VŨ TRỤ · KHÁM PHÁ QUÁ KHỨ · TRUYỀN CẢM HỨNG TƯƠNG LAI"
@@ -58,14 +58,14 @@ translations = {
         "moon_title": "THE MOON",
         "moon_desc": "Explore NASA hardware sent to the Moon and discover the traces they left behind.",
         "archive_title": "THE ARCHIVES",
-        "archive_desc": "Discover the machines, equipment and missions that expanded humanity's knowledge.",
+        "archive_desc": "Discover machines, technologies, and equipment that helped humanity conquer the limits of the universe.",
         "mars_title": "MARS",
         "mars_desc": "Explore robotic explorers and the traces of technology on the Red Planet.",
         "back": "← BACK TO HOME",
         "moon_detail": "LEGACY ON THE MOON",
         "moon_text": "The Moon preserves traces of many space missions. From impact probes to lunar landers, every piece of hardware tells a story about humanity's exploration.",
         "archive_detail": "SPACE TECHNOLOGY ARCHIVES",
-        "archive_text": "Behind every space mission are machines designed for a special purpose. Some continue operating, while others complete their missions and become technological heritage.",
+        "archive_text": "The Archives preserve knowledge about space exploration technology, complementing the Moon and Mars sections.",
         "mars_detail": "LEGACY ON MARS",
         "mars_text": "Mars has become the working ground for many robotic explorers. These machines help humanity study the terrain, climate and history of the Red Planet.",
         "footer": "SPACE HERITAGE · EXPLORING THE PAST · INSPIRING THE FUTURE"
@@ -355,6 +355,8 @@ elif st.session_state.page == "detail":
         <div class="detail-heading">{t["archive_detail"]}</div>
         <div class="detail-text">{t["archive_text"]}</div>
         """, unsafe_allow_html=True)
+
+        show_archive_timeline(st.session_state.language)
 
     elif selected == "mars":
         st.markdown(f"""

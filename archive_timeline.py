@@ -1,9 +1,9 @@
 import streamlit as st
 
 def show_archive_timeline(language="VI"):
-    """Hiển thị các mục Kho Trữ: 2 mục 1 dòng, ảnh thu nhỏ gọn, khi bấm vào xem chi tiết sẽ có 2 ảnh riêng biệt cho Mặt Trăng và Sao Hỏa"""
+    """Hiển thị các mục Kho Trữ: 2 mục 1 dòng, ảnh thu nhỏ gọn, khi bấm vào xem chi tiết sẽ có 2 ảnh riêng biệt cho Mặt Trăng và Sao Hỏa kèm nút đóng"""
     
-    # CSS tùy chỉnh kích thước thẻ và hình ảnh gọn gàng
+    # CSS tùy chỉnh kích thước thẻ và hình ảnh gọn gàng, cân đối
     st.markdown("""
     <style>
     .archive-card {
@@ -160,7 +160,7 @@ def show_archive_timeline(language="VI"):
                     "image": "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=800",
                     "important": "Công nghệ lọc khí CO2 thành oxy (MOXIE trên tàu Perseverance) phục vụ căn cứ Sao Hỏa tương lai.",
                     "invented": "Năm 2014",
-                    "used": "Năm 2021 (On Sao Hỏa)",
+                    "used": "Năm 2021 (Trên Sao Hỏa)",
                     "structure": "Thiết bị điện phân oxit rắn, cảm biến áp suất khí quyển mỏng và vi mạch điều khiển tự động chịu nhiệt."
                 },
                 "link": "https://spinoff.nasa.gov/",
