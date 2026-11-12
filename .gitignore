@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 venv/
 .streamlit/secrets.toml
+space_legacy_accounts.db
+space_legacy_accounts.db-shm
+space_legacy_accounts.db-wal

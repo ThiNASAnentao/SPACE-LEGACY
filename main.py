@@ -1,11 +1,15 @@
 import streamlit as st
+from PIL import Image
 from moon_timeline import show_moon_timeline
 from mars_timeline import show_mars_timeline
 from archive_timeline import show_archive_timeline
+from training_game import show_training_game
+
+favicon = Image.open("assets/favicon.png")
 
 st.set_page_config(
-    page_title="SPACE LEGACY",
-    page_icon="🚀",
+    page_title="SPACE LEGACY | NASA5-VT7",
+    page_icon=favicon,
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -79,9 +83,75 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
 
 .stApp {
-    background: radial-gradient(circle at 50% 0%, #17294b 0%, #080d19 45%, #03060d 100%);
+    background:
+        radial-gradient(ellipse at 50% -15%, rgba(36, 91, 164, .48), transparent 48%),
+        radial-gradient(ellipse at 12% 38%, rgba(27, 68, 125, .20), transparent 34%),
+        radial-gradient(ellipse at 88% 72%, rgba(71, 39, 116, .16), transparent 36%),
+        linear-gradient(180deg, #071326 0%, #050b18 48%, #02050c 100%);
+    background-attachment: fixed;
     color: white;
     font-family: 'Roboto', sans-serif;
+}
+
+/* Animated deep-space background */
+.stApp::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: .72;
+    background-image:
+        radial-gradient(1.5px 1.5px at 8% 17%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 18% 72%, #9bcaff 98%, transparent),
+        radial-gradient(2px 2px at 31% 28%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 44% 83%, #c6ddff 98%, transparent),
+        radial-gradient(1.5px 1.5px at 57% 13%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 69% 57%, #9bcaff 98%, transparent),
+        radial-gradient(2px 2px at 82% 24%, #ffffff 98%, transparent),
+        radial-gradient(1px 1px at 94% 76%, #c6ddff 98%, transparent),
+        radial-gradient(1px 1px at 74% 91%, #ffffff 98%, transparent);
+    background-size: 430px 360px;
+    animation: star-drift 85s linear infinite, star-twinkle 5s ease-in-out infinite alternate;
+}
+
+.stApp::after {
+    content: "";
+    position: fixed;
+    top: -15%;
+    left: -30%;
+    width: 190px;
+    height: 2px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    border-radius: 50%;
+    background: linear-gradient(90deg, transparent, rgba(130, 195, 255, .95), #fff, transparent);
+    box-shadow: 0 0 12px 2px rgba(92, 165, 255, .5);
+    transform: rotate(-24deg);
+    animation: shooting-star 13s ease-in-out infinite;
+}
+
+@keyframes star-drift {
+    from { background-position: 0 0; }
+    to { background-position: 430px 360px; }
+}
+@keyframes star-twinkle {
+    from { opacity: .38; }
+    to { opacity: .9; }
+}
+@keyframes shooting-star {
+    0%, 72% { opacity: 0; transform: translate3d(0,0,0) rotate(-24deg); }
+    74% { opacity: 1; }
+    84% { opacity: .9; transform: translate3d(145vw,75vh,0) rotate(-24deg); }
+    85%, 100% { opacity: 0; transform: translate3d(145vw,75vh,0) rotate(-24deg); }
+}
+
+/* Keep the app content above the animated background */
+.stApp > header, .stApp [data-testid="stAppViewContainer"],
+.stApp [data-testid="stMain"] {
+    position: relative;
+    z-index: 1;
 }
 
 header[data-testid="stHeader"] {
@@ -116,6 +186,7 @@ header[data-testid="stHeader"] {
 .hero {
     text-align: center;
     padding: 30px 10px 65px;
+    position: relative;
 }
 
 .hero-title {
@@ -163,13 +234,15 @@ header[data-testid="stHeader"] {
     border: 1px solid rgba(100, 160, 255, 0.3);
     border-radius: 13px;
     overflow: hidden;
-    background: #101a2c;
-    transition: all 0.3s ease;
+    background: linear-gradient(155deg, rgba(20, 39, 67, .94), rgba(7, 15, 30, .96));
+    backdrop-filter: blur(8px);
+    transition: all 0.35s ease;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .22);
     cursor: pointer;
 }
 
 .explore-card:hover {
-    transform: translateY(-9px);
+    transform: translateY(-9px) scale(1.012);
     border-color: #55a5ff;
     box-shadow: 0 10px 35px rgba(40, 130, 255, 0.25);
 }
@@ -327,6 +400,65 @@ if st.session_state.page == "home":
         </a>
         """, unsafe_allow_html=True)
 
+    # TRAINING MODE - placed below the three exploration cards and above the footer
+    st.markdown("""
+    <style>
+    .training-home {
+        margin-top: 58px;
+        padding: 28px 24px;
+        border: 1px solid rgba(91, 164, 255, .42);
+        border-radius: 16px;
+        background: linear-gradient(120deg, rgba(18, 42, 76, .92), rgba(5, 12, 27, .96));
+        box-shadow: 0 0 28px rgba(48, 128, 230, .12);
+        text-align: center;
+    }
+    .training-home-kicker {
+        color: #75baff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 11px;
+        letter-spacing: 4px;
+        margin-bottom: 9px;
+    }
+    .training-home-title {
+        color: #f4f8ff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(24px, 4vw, 36px);
+        font-weight: 800;
+        letter-spacing: 3px;
+        text-shadow: 0 0 18px rgba(78, 158, 255, .45);
+    }
+    .training-home-desc {
+        color: #aabbd4;
+        font-size: 14px;
+        line-height: 1.8;
+        margin: 10px auto 18px;
+        max-width: 720px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    training_title = "TRUNG TÂM HUẤN LUYỆN" if st.session_state.language == "VI" else "TRAINING CENTER"
+    training_desc = (
+        "Thử thách trí nhớ với robot thám hiểm và tư duy chiến thuật qua các nhiệm vụ mô phỏng."
+        if st.session_state.language == "VI"
+        else "Test your rover knowledge and tactical thinking through quick mission simulations."
+    )
+    training_button = "⚡ BẮT ĐẦU HUẤN LUYỆN" if st.session_state.language == "VI" else "⚡ ENTER TRAINING MODE"
+
+    st.markdown(f"""
+    <div class="training-home">
+        <div class="training-home-kicker">SPACE LEGACY · SPECIAL MISSION</div>
+        <div class="training-home-title">{training_title}</div>
+        <div class="training-home-desc">{training_desc}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    _, training_col, _ = st.columns([1, 1.5, 1])
+    with training_col:
+        if st.button(training_button, key="open_training_mode", use_container_width=True):
+            st.session_state.page = "training"
+            st.rerun()
+
     st.markdown(
         f'<div class="footer">{t["footer"]}</div>',
         unsafe_allow_html=True
@@ -374,3 +506,6 @@ elif st.session_state.page == "detail":
         f'<div class="footer">{t["footer"]}</div>',
         unsafe_allow_html=True
     )
+
+elif st.session_state.page == "training":
+    show_training_game(st.session_state.language)
