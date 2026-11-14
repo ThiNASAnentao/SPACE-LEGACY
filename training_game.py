@@ -583,154 +583,81 @@ def show_leaderboard(language):
 
 
 def show_training_game(language="VI"):
+    """SPACE LEGACY — Mars Rover Repair Simulator (2D WASD + hold E)."""
     init_state()
     if not account_gate(language):
         return
+
     st.markdown("""
-    <div style="text-align:center;padding:18px 8px 22px;border:1px solid #35699f;border-radius:16px;
-    background:linear-gradient(120deg,#102847,#080f1d);margin-bottom:20px">
-      <div style="font:800 clamp(25px,4vw,40px) Orbitron,Arial;color:#eaf5ff;letter-spacing:3px;text-shadow:0 0 18px #4a9dff">TRAINING CENTER</div>
-      <div style="font:700 13px Orbitron,Arial;color:#82bdff;letter-spacing:4px;margin-top:8px">REVENGE PROTOCOL · LUNAR COMMAND</div>
-      <p style="color:#c1d5eb;margin:12px 0 0">Think ahead. Protect the crew. Preserve the legacy.</p>
+    <div style="text-align:center;padding:18px 8px 20px;border:1px solid #a85c37;border-radius:16px;
+    background:linear-gradient(120deg,#3a1b16,#101522);margin-bottom:14px">
+      <div style="font:800 clamp(25px,4vw,40px) Orbitron,Arial;color:#fff0e6;letter-spacing:3px;text-shadow:0 0 18px #ff783d">MARS ROBOT REPAIR</div>
+      <div style="font:700 12px Orbitron,Arial;color:#ffb18b;letter-spacing:3px;margin-top:8px">SPACE LEGACY · FIELD ENGINEER PROTOCOL</div>
+      <p style="color:#f0d2c2;margin:10px 0 0">Khám phá Sao Hỏa · Sửa chữa rover · Mở khóa hồ sơ khoa học</p>
     </div>
     """, unsafe_allow_html=True)
-
-    if st.button(tx(language, "← VỀ TRANG CHỦ", "← BACK HOME"), key="training_back_home"):
+    if st.button(tx(language, "← VỀ TRANG CHỦ", "← BACK HOME"), key="mars_repair_back"):
         st.session_state.page = "home"
         st.session_state.training_stage = "menu"
         st.rerun()
 
-    stage = st.session_state.training_stage
-
-    if stage == "menu":
-        st.markdown("### " + tx(language, "CHỌN CHƯƠNG TRÌNH HUẤN LUYỆN", "SELECT TRAINING PROGRAM"))
-        a, b = st.columns(2, gap="large")
-        with a:
-            st.markdown("<div class='training-panel'><h3>🤖 ROBOT MEMORY</h3><p>Nhận diện robot qua hình ảnh NASA và trả lời câu hỏi về sứ mệnh.</p></div>", unsafe_allow_html=True)
-            if st.button(tx(language, "BẮT ĐẦU ROBOT MEMORY", "START ROBOT MEMORY"), use_container_width=True):
-                reset_memory(); st.rerun()
-        with b:
-            st.markdown("<div class='training-panel'><h3>🌕 LUNAR BASE COMMAND</h3><p>Điều hành căn cứ Mặt Trăng, quản lý tài nguyên và đưa ra quyết định chiến thuật.</p></div>", unsafe_allow_html=True)
-            if st.button(tx(language, "ĐIỀU HÀNH CĂN CỨ", "COMMAND THE BASE"), use_container_width=True):
-                reset_base(); st.rerun()
-        st.divider()
-        show_leaderboard(language)
-
-    elif stage == "memory":
-        i = st.session_state.memory_round
-        q = ROBOT_QUESTIONS[i]
-        st.markdown(f"### 🤖 ROBOT MEMORY · {i + 1}/{len(ROBOT_QUESTIONS)}")
-        st.progress((i + 1) / len(ROBOT_QUESTIONS))
-        st.image(q["image"], use_container_width=True, caption=q["name"] + " · NASA mission image")
-        st.markdown(f"<div class='question-box'><p>MISSION KNOWLEDGE CHECK</p><h2>{tx(language, q['q_vi'], q['q_en'])}</h2></div>", unsafe_allow_html=True)
-        opts = q["opts_vi"] if language == "VI" else q["opts_en"]
-        selected = st.radio(tx(language, "Chọn một đáp án:", "Choose one answer:"), opts, key=f"robot_answer_{i}")
-        if st.button(tx(language, "XÁC NHẬN ĐÁP ÁN", "SUBMIT ANSWER"), key=f"robot_submit_{i}", use_container_width=True):
-            if opts.index(selected) == q["answer"]:
-                st.session_state.memory_score += 1
-                if i == len(ROBOT_QUESTIONS) - 1:
-                    score = round(st.session_state.memory_score / len(ROBOT_QUESTIONS) * 100)
-                    add_leaderboard("ROBOT MEMORY", score, "MISSION PASSED")
-                    st.session_state.training_stage = "memory_won"
-                else:
-                    st.session_state.memory_round += 1
-                st.rerun()
-            else:
-                st.session_state.memory_failed = i
-                st.session_state.training_stage = "memory_archive"
-                st.rerun()
-
-    elif stage == "memory_archive":
-        st.error(tx(language, "Chưa hoàn thành! Đọc hồ sơ trước khi mở khóa lượt phục thù.", "Not complete! Review the archive before unlocking revenge."))
-        st.markdown("## 📚 " + tx(language, "HỒ SƠ ROBOT", "ROVER ARCHIVE"))
-        for i, q in enumerate(ROBOT_QUESTIONS):
-            with st.expander(q["name"], expanded=(i == st.session_state.memory_failed)):
-                st.image(q["image"], use_container_width=True)
-                st.write(tx(language, q["fact_vi"], q["fact_en"]))
-                st.checkbox(tx(language, "Tôi đã đọc và hiểu", "I have read and understood"), key=f"memory_read_{i}")
-        if all(st.session_state.get(f"memory_read_{i}", False) for i in range(3)):
-            st.success(tx(language, "ĐÃ MỞ KHÓA REVENGE PROTOCOL!", "REVENGE PROTOCOL UNLOCKED!"))
-            if st.button(tx(language, "🔥 CHƠI LẠI ĐỂ PHỤC THÙ", "🔥 PLAY AGAIN — REVENGE"), use_container_width=True):
-                for i in range(3): st.session_state.pop(f"memory_read_{i}", None)
-                reset_memory(); st.rerun()
-
-    elif stage == "memory_won":
-        st.markdown("<div class='ending-card'><h1>🏅 ROBOT MEMORY CLEARED</h1><h2>EXPLORER KNOWLEDGE BADGE</h2></div>", unsafe_allow_html=True)
-        st.write(tx(language, f"Bạn trả lời đúng {st.session_state.memory_score}/3 câu.", f"You answered {st.session_state.memory_score}/3 questions correctly."))
-        show_leaderboard(language)
-        if st.button(tx(language, "VỀ TRUNG TÂM HUẤN LUYỆN", "BACK TO TRAINING CENTER"), use_container_width=True):
-            st.session_state.training_stage = "menu"; st.rerun()
-
-    elif stage == "base":
-        i = st.session_state.base_round
-        if st.session_state.get("base_event_round") != i:
-            st.session_state.base_event_round = i
-            st.session_state.base_natural_event = random.choice(["DUST", "METEOR", "ECLIPSE", "THERMAL", "MICRO"])
-            event_costs = {"DUST": {"power": -6}, "METEOR": {"fuel": -2}, "ECLIPSE": {"power": -10}, "THERMAL": {"power": -5, "fuel": -3}, "MICRO": {"hull": -4}}
-            for resource, change in event_costs[st.session_state.base_natural_event].items():
-                st.session_state.base_resources[resource] = max(0, min(100, st.session_state.base_resources[resource] + change))
-        render_base_scene(language, st.session_state.get("base_natural_event", "DUST"))
-        render_resources(st.session_state.base_resources)
-        event = BASE_ROUNDS[i]
-        st.markdown(f"### 🌑 {tx(language, event['title_vi'], event['title_en'])} · {i + 1}/5")
-        st.progress((i + 1) / 5)
-        st.markdown(f"<div class='question-box'><p>MISSION CONTROL · DECISION {i + 1}</p><h2>{tx(language, event['story_vi'], event['story_en'])}</h2></div>", unsafe_allow_html=True)
-        st.markdown("### 📊 " + tx(language, "BẢNG TRAO ĐỔI TÀI NGUYÊN", "RESOURCE TRADE-OFF TABLES"))
-        st.caption(tx(language, "Mở từng bảng để xem tài nguyên sẽ mất hoặc nhận trước khi quyết định.", "Open each panel to inspect resource costs and gains before deciding."))
-        resource_names = {"oxygen": "Oxy", "power": "Điện", "water": "Nước", "food": "Lương thực", "fuel": "Nhiên liệu", "hull": "Độ bền"}
-        if language == "EN":
-            resource_names = {"oxygen": "Oxygen", "power": "Power", "water": "Water", "food": "Food", "fuel": "Fuel", "hull": "Integrity"}
-        for n, (name, description, delta, points) in enumerate(event["choices"]):
-            with st.expander(f"PHƯƠNG ÁN {n + 1} · {name}  |  {tx(language, 'Điểm chiến thuật', 'Strategy points')}: +{points}", expanded=(n == 0)):
-                st.write(description)
-                changes = [{"Tài nguyên" if language == "VI" else "Resource": resource_names[k],
-                            "Thay đổi" if language == "VI" else "Change": f"{v:+d}",
-                            "Sau quyết định" if language == "VI" else "After choice": f"{max(0, min(100, st.session_state.base_resources.get(k, 0) + v))}%"}
-                           for k, v in delta.items()]
-                st.table(changes)
-        choice_labels = [f"{n + 1}. {item[0]} — {item[1]}" for n, item in enumerate(event["choices"])]
-        chosen = st.radio(tx(language, "⚡ CHỌN PHƯƠNG ÁN ĐIỀU HÀNH — ĐỌC KỸ CHI PHÍ:", "⚡ SELECT A COMMAND — REVIEW THE COSTS:"), choice_labels, key=f"base_choice_{i}")
-        check = STRATEGY_CHECKS[i]
-        st.markdown(f"<div class='question-box'><p>🧠 STRATEGY CHECK · BONUS QUESTION</p><h2>{tx(language, check['q_vi'], check['q_en'])}</h2></div>", unsafe_allow_html=True)
-        check_opts = check["opts_vi"] if language == "VI" else check["opts_en"]
-        strategy_answer = st.radio(tx(language, "Câu hỏi tư duy bổ sung:", "Additional strategy question:"), check_opts, key=f"strategy_check_{i}")
-        if st.button(tx(language, "XÁC NHẬN QUYẾT ĐỊNH", "CONFIRM DECISION"), key=f"base_confirm_{i}", use_container_width=True):
-            choice_index = choice_labels.index(chosen)
-            name, description, delta, points = event["choices"][choice_index]
-            for key, amount in delta.items():
-                st.session_state.base_resources[key] = max(0, min(100, st.session_state.base_resources.get(key, 0) + amount))
-            st.session_state.base_points += points
-            if check_opts.index(strategy_answer) == check["answer"]:
-                st.session_state.base_points += 3
-                st.toast(tx(language, "Chính xác! +3 điểm tư duy", "Correct! +3 strategy points"), icon="🧠")
-            else:
-                st.session_state.base_points = max(0, st.session_state.base_points - 1)
-            st.session_state.base_log.append(name + (" | Bonus: +3" if check_opts.index(strategy_answer) == check["answer"] else " | Bonus: 0"))
-            if i == 4:
-                ending_index, score = choose_ending(st.session_state.base_resources, st.session_state.base_points)
-                st.session_state.base_ending = ending_index
-                st.session_state.base_final_score = score
-                add_leaderboard("LUNAR BASE COMMAND", score, ENDINGS[ending_index][0])
-                st.session_state.training_stage = "base_ending"
-            else:
-                st.session_state.base_round += 1
-            st.rerun()
-
-    elif stage == "base_ending":
-        render_base_scene(language, st.session_state.get("base_natural_event", "DUST"))
-        render_resources(st.session_state.base_resources)
-        idx = st.session_state.base_ending
-        title_vi, desc_vi, title_en = ENDINGS[idx]
-        st.markdown(f"<div class='ending-card'><p style='letter-spacing:4px;color:#85bdff'>MISSION RESULT · ENDING {idx + 1:02d}/20</p><h1 style='color:#fff'>{'🏆' if idx < 6 else '🛰️' if idx < 13 else '⚠️'} {tx(language, title_vi, title_en)}</h1><h2 style='color:#9bcaff'>{st.session_state.base_final_score}/100</h2><p style='font-size:17px;color:#d2e2f5'>{tx(language, desc_vi, ENDING_DESCRIPTIONS_EN[idx])}</p></div>", unsafe_allow_html=True)
-        st.markdown("### " + tx(language, "NHẬT KÝ QUYẾT ĐỊNH", "DECISION LOG"))
-        for n, command in enumerate(st.session_state.base_log, 1):
-            st.write(f"**{n}.** {command}")
-        show_leaderboard(language)
-        left, right = st.columns(2)
-        with left:
-            if st.button(tx(language, "🔁 CHƠI LẠI CĂN CỨ", "🔁 REPLAY BASE MISSION"), use_container_width=True):
-                reset_base(); st.rerun()
-        with right:
-            if st.button(tx(language, "VỀ TRUNG TÂM", "BACK TO TRAINING CENTER"), use_container_width=True):
-                st.session_state.training_stage = "menu"; st.rerun()
-
+    html = r"""<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+    *{box-sizing:border-box}body{margin:0;background:#080f1b;color:#eaf3ff;font-family:Arial,sans-serif}#wrap{max-width:1100px;margin:auto;padding:8px}
+    #hud{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.stat{background:#142338;border:1px solid #294764;border-radius:9px;padding:8px 12px;flex:1;min-width:125px;font-size:13px}.stat b{display:block;color:#ffc08e;font-size:17px;margin-top:3px}
+    #gamebox{position:relative;border:1px solid #87553f;border-radius:13px;overflow:hidden;background:#b45d39}canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+    #hint{padding:10px 12px;background:#111f31;border:1px solid #294764;border-radius:9px;margin-top:8px;font-size:13px;line-height:1.6;color:#c7d9ed}
+    #panel{display:none;position:absolute;inset:4%;overflow:auto;background:rgba(7,15,27,.97);border:1px solid #f09a68;border-radius:12px;padding:18px;z-index:5;box-shadow:0 0 35px #000}
+    #panel h2{color:#ffb080;margin:0 0 8px}#panel p{line-height:1.55;color:#d8e6f5}.part{background:#17283b;border:1px solid #35516e;padding:12px;border-radius:9px;margin:9px 0}.part button,.action{background:#d66e43;color:white;border:0;border-radius:7px;padding:9px 12px;font-weight:bold;cursor:pointer;margin:5px 5px 0 0}.part button:disabled{opacity:.35;cursor:not-allowed}.muted{color:#9fb6ce;font-size:12px}.tag{display:inline-block;padding:4px 8px;background:#243d56;border-radius:20px;margin:3px;font-size:11px}
+    #toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:#101b2a;border:1px solid #ffc08e;padding:9px 14px;border-radius:20px;display:none;z-index:4;text-align:center;font-size:13px;max-width:90%}
+    #dossier{display:none;margin-top:10px;background:#101f31;border:1px solid #4d789c;border-radius:12px;padding:16px}#dossier h2{color:#ffc08e}#dossier h3{color:#9bcfff;margin-bottom:4px}#dossier li{margin:6px 0;line-height:1.5}
+    #bottom{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}#bottom button{flex:1;min-width:150px;padding:10px;border-radius:8px;border:1px solid #52708e;background:#1b3047;color:#fff;cursor:pointer}
+    </style></head><body><div id="wrap">
+    <div id="hud">
+      <div class="stat">⚡ ĐIỆN<b id="power">100</b></div><div class="stat">⛽ NHIÊN LIỆU<b id="fuel">85</b></div><div class="stat">🧩 LINH KIỆN<b id="parts">65</b></div><div class="stat">❄️ CHẤT LÀM MÁT<b id="coolant">35</b></div><div class="stat">📚 HỒ SƠ ĐÃ MỞ<b id="count">0/6</b></div>
+    </div>
+    <div id="gamebox"><canvas id="c" width="960" height="540"></canvas><div id="toast"></div><div id="panel"></div></div>
+    <div id="hint">🎮 <b>Điều khiển:</b> W A S D để di chuyển · Đến gần robot đang hỏng và <b>GIỮ E</b> khoảng 0,7 giây để kiểm tra/sửa chữa · Chọn từng bộ phận và trả chi phí tài nguyên để hoàn thành sửa chữa · Sửa xong sẽ mở hồ sơ cấu tạo và thông tin khoa học của robot.</div>
+    <div id="bottom"><button onclick="resetGame()">↻ Chơi lại nhiệm vụ</button><button onclick="showAllDossiers()">📚 Kho hồ sơ robot đã mở</button></div><div id="dossier"></div>
+    </div>
+    <script>
+    const robots=[
+    {id:'sojourner',name:'SOJOURNER',year:'1997',mission:'Mars Pathfinder',role:'Xe tự hành thử nghiệm công nghệ đầu tiên hoạt động trên Sao Hỏa.',image:'https://images-assets.nasa.gov/image/PIA01122/PIA01122~orig.jpg',fault:'Bánh xe và hệ thống cấp điện bị lỗi sau thời gian hoạt động.',parts:[['Bánh xe và hệ truyền động','4 bánh xe có gai giúp di chuyển trên bề mặt gồ ghề; động cơ điện điều khiển từng bánh.','Kiểm tra truyền động bánh xe và thay ổ đỡ bị mòn.','parts',8],['Tấm pin mặt trời','Các tế bào quang điện chuyển ánh sáng Mặt Trời thành điện năng.','Làm sạch bề mặt thu sáng và khôi phục đường dây điện.','power',16],['Máy tính điều khiển','Máy tính onboard xử lý lệnh, dữ liệu cảm biến và điều khiển chuyển động.','Thay mô-đun kết nối và kiểm tra tín hiệu điều khiển.','parts',7]],facts:[['Kích thước','Cỡ một chiếc lò vi sóng; khối lượng khoảng 10,6 kg.'],['Nhiệm vụ','Thử nghiệm khả năng di chuyển, chụp ảnh và phân tích đá/đất.'],['Thiết bị','Camera, máy đo thành phần vật liệu Alpha Proton X-ray Spectrometer (APXS), cảm biến và hệ thống truyền thông.'],['Nguồn năng lượng','Tấm pin mặt trời; pin tích trữ hỗ trợ hoạt động.'],['Điểm đặc biệt','Sojourner là xe tự hành đầu tiên hoạt động trên Sao Hỏa, mở đường cho các rover lớn hơn.']]},
+    {id:'spirit',name:'SPIRIT',year:'2004',mission:'Mars Exploration Rover A',role:'Rover thám hiểm địa chất, tìm dấu hiệu môi trường nước cổ đại.',image:'https://images-assets.nasa.gov/image/PIA05578/PIA05578~orig.jpg',fault:'Bộ truyền động bánh xe và camera điều hướng mất ổn định.',parts:[['Cụm bánh xe rocker-bogie','Hệ thống treo sáu bánh giúp rover vượt địa hình đá mà vẫn giữ thân xe ổn định.','Căn chỉnh hệ treo và thay cụm truyền động mô phỏng.','parts',12],['Camera điều hướng','Cặp camera stereo hỗ trợ dựng hình địa hình và lập kế hoạch đường đi.','Khôi phục nguồn điện và hiệu chỉnh cụm camera.','power',14],['Bộ điều khiển nhiệt','Các bộ sưởi và cảm biến nhiệt giúp thiết bị chịu được đêm lạnh trên Sao Hỏa.','Thay lớp cách nhiệt và nạp chất làm mát mô phỏng.','coolant',8]],facts:[['Thời gian hạ cánh','Tháng 1 năm 2004.'],['Thiết kế','Sáu bánh, hệ thống treo rocker-bogie, thân xe chứa máy tính và thiết bị khoa học.'],['Thiết bị khoa học','Camera toàn cảnh, camera điều hướng, máy quang phổ Mössbauer, APXS và dụng cụ mài đá RAT.'],['Mục tiêu','Tìm hiểu đá và đất, đặc biệt là bằng chứng về nước từng tồn tại.'],['Di sản','Spirit hoạt động lâu hơn nhiều so với thời gian nhiệm vụ ban đầu dự kiến.']]},
+    {id:'opportunity',name:'OPPORTUNITY',year:'2004',mission:'Mars Exploration Rover B',role:'Rover nghiên cứu đá, đất và lịch sử nước trên Sao Hỏa.',image:'https://images-assets.nasa.gov/image/PIA05578/PIA05578~orig.jpg',fault:'Cánh tay robot và bộ phận phân tích mẫu không phản hồi.',parts:[['Cánh tay robot','Instrument Deployment Device đưa các dụng cụ khoa học tiếp xúc gần với đá.','Khôi phục khớp xoay và kiểm tra bộ truyền động.','parts',13],['RAT – dụng cụ mài đá','Rock Abrasion Tool làm lộ bề mặt đá bên dưới lớp phong hóa.','Thay đầu mài mô phỏng và cấp điện cho mô-tơ.','power',15],['Bộ truyền thông','Ăng-ten và hệ thống vô tuyến gửi dữ liệu về Trái Đất qua các tàu quỹ đạo.','Nạp nguồn và thay mô-đun liên lạc.','fuel',9]],facts:[['Thời gian hạ cánh','Tháng 1 năm 2004.'],['Thiết kế','Rover sáu bánh, camera, cánh tay robot và nhiều thiết bị phân tích địa chất.'],['Khám phá','Tìm thấy các dấu hiệu địa chất cho thấy nước lỏng từng ảnh hưởng đến đá Sao Hỏa.'],['Thời gian hoạt động','Hoạt động gần 15 năm, vượt xa mục tiêu nhiệm vụ ban đầu 90 ngày Sao Hỏa.'],['Kết thúc nhiệm vụ','NASA kết thúc nhiệm vụ năm 2019 sau khi mất liên lạc trong một trận bão bụi lớn.']]},
+    {id:'curiosity',name:'CURIOSITY',year:'2012',mission:'Mars Science Laboratory',role:'Phòng thí nghiệm di động nghiên cứu khả năng Sao Hỏa từng hỗ trợ sự sống vi sinh.',image:'https://images-assets.nasa.gov/image/PIA16064/PIA16064~orig.jpg',fault:'Máy khoan, hệ thống phân tích mẫu và nguồn điện cần bảo trì.',parts:[['Máy khoan và xử lý mẫu','Cánh tay robot mang mũi khoan lấy mẫu đá; cơ cấu xử lý đưa mẫu đến thiết bị phân tích.','Thay mũi khoan mô phỏng và căn chỉnh cơ cấu nạp mẫu.','parts',15],['SAM – phòng thí nghiệm hóa học','Sample Analysis at Mars phân tích thành phần hóa học và các hợp chất trong mẫu.','Khôi phục bộ gia nhiệt và cấp điện cho thiết bị phân tích.','power',20],['Nguồn điện RTG','Máy phát nhiệt điện đồng vị phóng xạ biến nhiệt từ sự phân rã plutonium-238 thành điện.','Kiểm tra đường phân phối điện và làm mát bộ điều khiển.','coolant',10]],facts:[['Hạ cánh','Tháng 8 năm 2012 trong miệng núi lửa Gale.'],['Kích thước','Lớn cỡ một chiếc ô tô nhỏ; khối lượng khoảng 899 kg.'],['Nguồn năng lượng','Máy phát điện nhiệt điện đồng vị phóng xạ (MMRTG), không phụ thuộc ánh sáng Mặt Trời.'],['Thiết bị chính','Mastcam, ChemCam, SAM, CheMin, máy khoan, cánh tay robot và cảm biến môi trường.'],['Khám phá','Đã tìm thấy bằng chứng về môi trường hồ và suối cổ đại có điều kiện phù hợp cho sự sống vi sinh.'],['Điểm đặc biệt','Curiosity sử dụng hệ thống hạ cánh sky crane để được thả nhẹ xuống bề mặt.']]},
+    {id:'perseverance',name:'PERSEVERANCE',year:'2021',mission:'Mars 2020',role:'Tìm dấu hiệu sự sống cổ đại và thu thập, lưu trữ mẫu đá để nghiên cứu.',image:'https://images-assets.nasa.gov/image/PIA24342/PIA24342~orig.jpg',fault:'Hệ thống lấy mẫu, camera và mô-đun liên lạc gặp sự cố.',parts:[['Hệ thống lấy và lưu mẫu','Mũi khoan lấy lõi đá; các ống mẫu được niêm phong và lưu trữ để có thể đưa về Trái Đất trong tương lai.','Thay cụm chứa ống mẫu và hiệu chỉnh cơ cấu khoan.','parts',17],['Mastcam-Z và SuperCam','Camera zoom và thiết bị phân tích từ xa nghiên cứu địa hình, thành phần đá.','Hiệu chỉnh camera, cấp điện cho bộ cảm biến.','power',18],['Hệ thống di chuyển','Sáu bánh xe, hệ thống treo rocker-bogie và máy tính tự hành hỗ trợ đi qua địa hình.','Thay mô-đun bánh xe và nạp nhiên liệu mô phỏng cho xe cứu hộ.','fuel',12]],facts:[['Hạ cánh','Tháng 2 năm 2021 tại miệng núi lửa Jezero.'],['Mục tiêu','Tìm dấu hiệu sinh học cổ đại, nghiên cứu địa chất và khí hậu Sao Hỏa.'],['Thiết bị','Mastcam-Z, SuperCam, PIXL, SHERLOC, RIMFAX, MEDA và hệ thống lấy mẫu.'],['Thiết kế','Rover có kích thước gần Curiosity nhưng mang hệ thống lấy mẫu và lưu trữ mẫu tiên tiến hơn.'],['Ingenuity','Perseverance mang theo trực thăng Ingenuity để thử nghiệm chuyến bay có điều khiển trên Sao Hỏa.'],['Ý nghĩa','Các mẫu được thu thập có thể giúp các nhà khoa học nghiên cứu sâu hơn trong phòng thí nghiệm trên Trái Đất.']]},
+    {id:'ingenuity',name:'INGENUITY',year:'2021',mission:'Mars Helicopter Technology Demonstration',role:'Trực thăng thử nghiệm công nghệ bay có điều khiển trong khí quyển Sao Hỏa.',image:'https://images-assets.nasa.gov/image/PIA23745/PIA23745~orig.jpg',fault:'Cánh quạt, pin và cảm biến định hướng cần được kiểm tra.',parts:[['Cánh quạt đồng trục','Hai bộ cánh quạt quay ngược chiều nhau tạo lực nâng trong khí quyển rất loãng của Sao Hỏa.','Căn chỉnh mô-đun rotor và thay khớp quay mô phỏng.','parts',14],['Pin và tấm pin mặt trời','Tấm pin sạc pin lithium-ion; năng lượng dùng cho bay, sưởi và máy tính.','Khôi phục mạch sạc và cấp điện dự trữ.','power',19],['Camera và cảm biến dẫn đường','Camera định vị và cảm biến quán tính hỗ trợ máy tính điều khiển chuyến bay tự động.','Hiệu chỉnh cảm biến và thay mô-đun liên lạc.','fuel',8]],facts:[['Chuyến bay đầu tiên','Tháng 4 năm 2021, thực hiện chuyến bay có điều khiển đầu tiên trên một hành tinh khác.'],['Khối lượng','Khoảng 1,8 kg.'],['Cấu tạo','Hai cánh quạt đồng trục, thân máy tính, pin, tấm pin mặt trời, camera và cảm biến.'],['Thách thức','Khí quyển Sao Hỏa rất loãng; trực thăng cần cánh quạt quay nhanh để tạo lực nâng.'],['Vai trò','Chứng minh khả năng bay trinh sát từ trên không, mở ra hướng khám phá mới.'],['Kết thúc hoạt động','Ingenuity hoàn thành 72 chuyến bay; nhiệm vụ kết thúc năm 2024 sau khi cánh quạt bị hư hại.']]}
+    ];
+    const c=document.getElementById('c'),ctx=c.getContext('2d'),panel=document.getElementById('panel'),toast=document.getElementById('toast');
+    let player={x:95,y:270},keys={},resources={power:150,fuel:85,parts:110,coolant:35},fixed={},unlocked={},active=null,hold=0,last=0,completed=0;
+    const labels={power:'điện',fuel:'nhiên liệu',parts:'linh kiện',coolant:'chất làm mát'};
+    const positions=robots.map((r,i)=>({x:300+(i%3)*290,y:145+Math.floor(i/3)*245}));
+    function say(t){toast.textContent=t;toast.style.display='block';clearTimeout(say.timer);say.timer=setTimeout(()=>toast.style.display='none',2400)}
+    function updateHud(){for(let k in resources)document.getElementById(k).textContent=resources[k];document.getElementById('count').textContent=completed+'/6'}
+    function draw(){ctx.clearRect(0,0,960,540);let g=ctx.createLinearGradient(0,0,0,540);g.addColorStop(0,'#d88759');g.addColorStop(1,'#7d3e32');ctx.fillStyle=g;ctx.fillRect(0,0,960,540);
+      for(let i=0;i<75;i++){let x=(i*137)%960,y=(i*83)%540;ctx.fillStyle=i%2?'rgba(55,30,26,.18)':'rgba(255,210,160,.18)';ctx.beginPath();ctx.arc(x,y,(i%4)+1,0,7);ctx.fill()}
+      ctx.fillStyle='#51352f';ctx.fillRect(0,0,960,540);ctx.fillStyle='#a65a3d';ctx.fillRect(0,0,960,540);
+      // base and landing structures
+      ctx.fillStyle='#d6d9d5';ctx.fillRect(25,35,170,75);ctx.fillStyle='#526b7d';ctx.fillRect(40,48,55,35);ctx.fillRect(108,48,70,35);ctx.fillStyle='#f5c18d';ctx.fillRect(85,110,50,8);
+      ctx.fillStyle='#e5c7aa';ctx.font='bold 14px Arial';ctx.fillText('MARS FIELD BASE',30,27);
+      robots.forEach((r,i)=>{let p=positions[i],done=!!fixed[r.id];ctx.save();ctx.translate(p.x,p.y);ctx.fillStyle=done?'#5fe0a1':'#263b4e';ctx.beginPath();ctx.arc(0,0,40,0,7);ctx.fill();ctx.fillStyle='#cbd8df';ctx.fillRect(-25,-15,50,25);ctx.fillStyle='#273b4b';for(let w of [-20,0,20]){ctx.beginPath();ctx.arc(w,17,7,0,7);ctx.fill()}ctx.fillStyle='#ffca92';ctx.fillRect(-7,-23,14,10);ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(r.name,0,56);ctx.fillStyle=done?'#5fe0a1':'#ffbd83';ctx.fillText(done?'✓ ĐÃ SỬA':'⚠ CẦN SỬA',0,72);ctx.restore()});
+      // astronaut
+      ctx.fillStyle='#f4f1e8';ctx.beginPath();ctx.arc(player.x,player.y-10,12,0,7);ctx.fill();ctx.fillStyle='#3b536b';ctx.fillRect(player.x-10,player.y+1,20,23);ctx.fillStyle='#8bd8ff';ctx.beginPath();ctx.arc(player.x,player.y-11,7,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText('KỸ SƯ',player.x,player.y+39);
+      let near=getNear();if(near&&!panel.style.display.includes('block')){ctx.strokeStyle='#ffe0a8';ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(near.x,near.y,54,0,7);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.font='bold 14px Arial';ctx.fillText('GIỮ E ĐỂ TƯƠNG TÁC',Math.min(near.x+48,770),near.y-48)}
+      requestAnimationFrame(draw)}
+    function getNear(){let best=null,d=9999;robots.forEach((r,i)=>{let p=positions[i],dd=Math.hypot(player.x-p.x,player.y-p.y);if(dd<d){d=dd;best={...p,robot:r,dist:dd}}});return d<78?best:null}
+    function openRepair(r){active=r;let done=fixed[r.id]||[];panel.style.display='block';panel.innerHTML=`<h2>🛠️ ${r.name} · TRẠM SỬA CHỮA</h2><p>${r.fault}</p><p class="muted">Sửa lần lượt các bộ phận. Mỗi thao tác tiêu hao tài nguyên trò chơi. Đây là đơn vị giả lập, không phải thông số kỹ thuật thật.</p>`+r.parts.map((p,i)=>{let is=done.includes(i),cost=p[3];return `<div class="part"><b>${is?'✅':'🔧'} ${p[0]}</b><p>${p[1]}</p><div class="muted">Chi phí: ${p[4]} ${labels[cost]}</div><button ${is?'disabled':''} onclick="repairPart(${i})">${is?'ĐÃ HOÀN THÀNH':'SỬA BỘ PHẬN'}</button></div>`}).join('')+`<button class="action" onclick="closePanel()">ĐÓNG</button>`}
+    function repairPart(i){let p=active.parts[i],cost=p[3],amount=p[4],done=fixed[active.id]||[];if(done.includes(i))return;if(resources[cost]<amount){say('Không đủ '+labels[cost]+'! Hãy tìm trạm tiếp tế.');return}resources[cost]-=amount;done.push(i);fixed[active.id]=done;updateHud();if(done.length===active.parts.length){completed++;unlocked[active.id]=true;updateHud();panel.innerHTML=`<h2>🎉 ${active.name} ĐÃ ĐƯỢC KHÔI PHỤC!</h2><p>Toàn bộ hệ thống mô phỏng đã hoạt động. Hồ sơ khoa học được mở khóa.</p><button class="action" onclick="openDossier('${active.id}')">📚 XEM CẤU TẠO & HỒ SƠ ROBOT</button><button class="action" onclick="closePanel()">TIẾP TỤC KHÁM PHÁ</button>`;say('Sửa chữa thành công! Đã mở khóa hồ sơ '+active.name)}else openRepair(active)}
+    function closePanel(){panel.style.display='none';active=null}
+    function openDossier(id){let r=robots.find(x=>x.id===id);let d=document.getElementById('dossier');d.style.display='block';d.innerHTML=`<h2>📘 HỒ SƠ KHOA HỌC · ${r.name}</h2><p><b>Sứ mệnh:</b> ${r.mission} · <b>Năm:</b> ${r.year}</p><p>${r.role}</p><img src="${r.image}" alt="${r.name}" style="width:100%;max-height:260px;object-fit:contain;background:#080f1b;border-radius:8px" onerror="this.style.display='none'"><h3>🔩 CẤU TẠO VÀ CÁC BỘ PHẬN</h3><ul>${r.parts.map(p=>`<li><b>${p[0]}:</b> ${p[1]}</li>`).join('')}</ul><h3>🪐 THÔNG TIN NHIỆM VỤ VÀ KHÁM PHÁ</h3><ul>${r.facts.map(f=>`<li><b>${f[0]}:</b> ${f[1]}</li>`).join('')}</ul><p class="muted">Nguồn tham khảo hình ảnh và dữ liệu: NASA/JPL. Nội dung được diễn giải phục vụ học tập.</p>`;d.scrollIntoView({behavior:'smooth',block:'start'})}
+    function showAllDossiers(){let ids=Object.keys(unlocked);if(!ids.length){say('Hãy sửa ít nhất một robot để mở hồ sơ!');return}openDossier(ids[ids.length-1])}
+    function resetGame(){player={x:95,y:270};keys={};resources={power:150,fuel:85,parts:110,coolant:35};fixed={};unlocked={};completed=0;updateHud();closePanel();document.getElementById('dossier').style.display='none';say('Nhiệm vụ mới bắt đầu!')}
+    window.repairPart=repairPart;window.closePanel=closePanel;window.openDossier=openDossier;window.showAllDossiers=showAllDossiers;window.resetGame=resetGame;
+    window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['w','a','s','d','e','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();keys[k]=true;if(k==='e'&&!keys._holding){keys._holding=true;hold=performance.now()} });
+    window.addEventListener('keyup',e=>{let k=e.key.toLowerCase();keys[k]=false;if(k==='e'){keys._holding=false;if(performance.now()-hold>650){let n=getNear();if(n){if(fixed[n.robot.id]?.length===n.robot.parts.length)openDossier(n.robot.id);else openRepair(n.robot)}else say('Hãy đến gần một robot để tương tác.')}}});
+    function move(t){let dt=Math.min((t-last)/16,2)||1;last=t;if(panel.style.display!=='block'){let v=2.8*dt;if(keys.w||keys.arrowup)player.y-=v;if(keys.s||keys.arrowdown)player.y+=v;if(keys.a||keys.arrowleft)player.x-=v;if(keys.d||keys.arrowright)player.x+=v;player.x=Math.max(15,Math.min(945,player.x));player.y=Math.max(75,Math.min(505,player.y))}requestAnimationFrame(move)}
+    updateHud();draw();requestAnimationFrame(move);
+    </script></body></html>"""
+    components.html(html, height=850, scrolling=True)
+    st.caption(tx(language, "Lưu ý: tài nguyên trong trò chơi là đơn vị giả lập để học cách cân nhắc nguồn lực, không phải quy trình sửa chữa hoặc thông số vận hành thật của NASA.", "Game resources are fictional learning units, not real NASA repair procedures or operating limits."))
