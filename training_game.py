@@ -273,17 +273,176 @@ def get_leaderboard(limit=10):
             ORDER BY s.score DESC, s.created_at ASC LIMIT ?""", (limit,)).fetchall()
 
 
+
 def account_gate(language):
     init_database()
+
+    # DANG NHAP BANG TAI KHOAN
     if st.session_state.auth_user:
         left, right = st.columns([4, 1])
+
         with left:
-            st.success(tx(language, f"Đang đăng nhập: **{st.session_state.auth_user}**", f"Signed in as **{st.session_state.auth_user}**"))
+            st.success(tx(
+                language,
+                f"Đang đăng nhập: {st.session_state.auth_user}",
+                f"Signed in as: {st.session_state.auth_user}"
+            ))
+
         with right:
-            if st.button(tx(language, "Đăng xuất", "Log out"), key="training_logout"):
+            if st.button(
+                tx(language, "Đăng xuất", "Log out"),
+                key="training_logout"
+            ):
                 st.session_state.auth_user = None
+                st.session_state.auth_guest = False
                 st.rerun()
+
         return True
+
+    # CHE DO KHACH
+    if st.session_state.auth_guest:
+        left, right = st.columns([4, 1])
+
+        with left:
+            st.info(tx(
+                language,
+                "👤 Bạn đang chơi với tư cách KHÁCH.",
+                "👤 You are playing as a GUEST."
+            ))
+
+        with right:
+            if st.button(
+                tx(language, "Thoát khách", "Exit guest"),
+                key="training_exit_guest"
+            ):
+                st.session_state.auth_guest = False
+                st.rerun()
+
+        return True
+
+    # LUA CHON TAI KHOAN HOAC KHACH
+    st.markdown(
+        "### 🚀 " + tx(
+            language,
+            "CHÀO MỪNG PHI HÀNH GIA",
+            "WELCOME, ASTRONAUT"
+        )
+    )
+
+    st.caption(tx(
+        language,
+        "Chọn cách tham gia trung tâm huấn luyện.",
+        "Choose how you want to enter the Training Center."
+    ))
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("### 🔐 TÀI KHOẢN")
+
+    with col2:
+        st.markdown("### 👤 GUEST MODE")
+
+    guest_clicked = st.button(
+        tx(
+            language,
+            "🎮 CHƠI VỚI TƯ CÁCH KHÁCH",
+            "🎮 PLAY AS GUEST"
+        ),
+        key="training_guest_button",
+        use_container_width=True
+    )
+
+    if guest_clicked:
+        st.session_state.auth_guest = True
+        st.rerun()
+
+    st.divider()
+
+    st.markdown(
+        "### 🔐 " + tx(
+            language,
+            "TÀI KHOẢN PHI HÀNH GIA",
+            "ASTRONAUT ACCOUNT"
+        )
+    )
+
+    tab_login, tab_register = st.tabs([
+        tx(language, "Đăng nhập", "Sign in"),
+        tx(language, "Tạo tài khoản", "Create account")
+    ])
+
+    with tab_login:
+        with st.form("training_login_form"):
+            username = st.text_input(
+                tx(language, "Tên người chơi", "Player name"),
+                max_chars=18
+            )
+
+            password = st.text_input(
+                tx(language, "Mật khẩu", "Password"),
+                type="password"
+            )
+
+            submitted = st.form_submit_button(
+                tx(language, "ĐĂNG NHẬP", "SIGN IN"),
+                use_container_width=True
+            )
+
+        if submitted:
+            if verify_account(username, password):
+                st.session_state.auth_user = username.strip()
+                st.session_state.auth_guest = False
+                st.rerun()
+            else:
+                st.error(tx(
+                    language,
+                    "Tên người chơi hoặc mật khẩu chưa đúng.",
+                    "Incorrect username or password."
+                ))
+
+    with tab_register:
+        with st.form("training_register_form"):
+            new_user = st.text_input(
+                tx(language, "Tên người chơi", "Player name"),
+                max_chars=18
+            )
+
+            new_password = st.text_input(
+                tx(language, "Mật khẩu", "Password"),
+                type="password"
+            )
+
+            confirm = st.text_input(
+                tx(language, "Nhập lại mật khẩu", "Confirm password"),
+                type="password"
+            )
+
+            submitted = st.form_submit_button(
+                tx(language, "TẠO TÀI KHOẢN", "CREATE ACCOUNT"),
+                use_container_width=True
+            )
+
+        if submitted:
+            if new_password != confirm:
+                st.error(tx(
+                    language,
+                    "Hai mật khẩu không khớp.",
+                    "Passwords do not match."
+                ))
+            else:
+                ok, message = create_account(
+                    new_user,
+                    new_password
+                )
+
+                if ok:
+                    st.success(message)
+                else:
+                    st.error(message)
+
+    return False
+
 
     st.markdown("### 🔐 " + tx(language, "TÀI KHOẢN PHI HÀNH GIA", "ASTRONAUT ACCOUNT"))
     st.caption(tx(language, "Tạo tên người chơi riêng để lưu thành tích. Mật khẩu được băm trước khi lưu; đừng dùng mật khẩu cá nhân quan trọng.",
@@ -327,7 +486,10 @@ def init_state():
         "memory_score": 0, "memory_failed": None, "memory_read": [],
         "base_round": 0, "base_resources": {"oxygen": 80, "power": 80, "water": 70, "food": 75, "hull": 90, "fuel": 65},
         "base_points": 0, "base_log": [], "base_ending": None,
-        "training_leaderboard": [], "training_attempts": 0, "auth_user": None,
+       "training_leaderboard": [],
+"training_attempts": 0,
+"auth_user": None,
+"auth_guest": False,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
