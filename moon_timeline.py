@@ -1,5 +1,58 @@
 
 import streamlit as st
+import requests
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def _get_nasa_mission_images(query, limit=5):
+    """Retrieve relevant public images from NASA's Image and Video Library."""
+    try:
+        response = requests.get(
+            "https://images-api.nasa.gov/search",
+            params={"q": query, "media_type": "image", "page_size": limit},
+            timeout=12,
+        )
+        response.raise_for_status()
+        items = response.json().get("collection", {}).get("items", [])
+
+        images = []
+        seen = set()
+        for item in items:
+            data = item.get("data", [{}])
+            links = item.get("links", [])
+            if not data or not links:
+                continue
+
+            image_url = links[0].get("href", "")
+            if not image_url or image_url in seen:
+                continue
+
+            seen.add(image_url)
+            images.append({
+                "url": image_url,
+                "caption": data[0].get("title", "NASA mission archive"),
+            })
+
+            if len(images) >= limit:
+                break
+
+        return images
+    except Exception:
+        # The timeline still works if NASA's image service is temporarily unavailable.
+        return []
+
+
+def _mission_image_query(mission_name):
+    queries = {
+        "RANGER 7": "Ranger 7 lunar spacecraft mission",
+        "LUNAR ORBITER 1": "Lunar Orbiter 1 Moon Earth image",
+        "SURVEYOR 1": "Surveyor 1 lunar lander Moon",
+        "SURVEYOR 3": "Surveyor 3 Apollo 12 Moon",
+        "LUNAR RECONNAISSANCE ORBITER": "Lunar Reconnaissance Orbiter Moon",
+    }
+    return queries.get(mission_name, f"{mission_name} Moon NASA")
+
+
 
 def show_moon_timeline(language="VI"):
 
@@ -167,6 +220,21 @@ def show_moon_timeline(language="VI"):
 
     st.markdown("""
     <style>
+    .moon-image-caption {
+        color: #9fb7d5;
+        font-size: 11px;
+        line-height: 1.5;
+        margin-top: 4px;
+    }
+
+    .moon-gallery-title {
+        color: #72baff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin: 8px 0 12px 0;
+    }
+
     .archive-title {
         font-size: 30px;
         font-weight: 800;
@@ -260,6 +328,9 @@ def show_moon_timeline(language="VI"):
     st.markdown("---")
 
     for mission in missions:
+        mission_images = _get_nasa_mission_images(
+            _mission_image_query(mission["name"]), limit=5
+        )
 
         with st.container(border=True):
 
@@ -292,12 +363,42 @@ def show_moon_timeline(language="VI"):
                 )
 
             with right:
+                if mission_images:
+                    st.image(
+                        mission_images[0]["url"],
+                        use_container_width=True,
+                    )
+                    st.markdown(
+                        f'<div class="moon-image-caption">{mission_images[0]["caption"]}</div>',
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    st.info(
+                        "Chưa tải được ảnh từ thư viện NASA. Nội dung hồ sơ vẫn hiển thị bình thường.",
+                        icon="🛰️",
+                    )
+
                 st.caption(labels["date"])
                 st.markdown(f"**{mission['year']}**")
                 st.caption(labels["status"])
                 st.markdown(mission["status"])
 
             with st.expander(labels["open"]):
+
+                if len(mission_images) > 1:
+                    st.markdown(
+                        '<div class="moon-gallery-title">NASA PHOTO ARCHIVE · THƯ VIỆN HÌNH ẢNH</div>',
+                        unsafe_allow_html=True,
+                    )
+                    gallery_images = mission_images[1:]
+                    gallery_columns = st.columns(min(3, len(gallery_images)))
+                    for image_index, image_data in enumerate(gallery_images):
+                        with gallery_columns[image_index % len(gallery_columns)]:
+                            st.image(
+                                image_data["url"],
+                                caption=image_data["caption"],
+                                use_container_width=True,
+                            )
 
                 st.markdown(
                     f'<div class="detail-label">{labels["mission"]}</div>',
