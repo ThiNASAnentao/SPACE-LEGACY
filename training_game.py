@@ -668,24 +668,45 @@ def show_training_game(language="VI"):
     const questionBanks={
       math:[
         {q:'Trạm có 5 pin, mỗi pin chứa 12 đơn vị điện. Tổng năng lượng là bao nhiêu?',a:['50','60','65','72'],c:1},
-        {q:'Một rover dùng 18 đơn vị điện trong buổi sáng và 24 đơn vị vào buổi chiều. Tổng cộng đã dùng bao nhiêu?',a:['32','40','42','44'],c:2},
+        {q:'Một rover dùng 18 đơn vị điện buổi sáng và 24 đơn vị buổi chiều. Tổng cộng đã dùng bao nhiêu?',a:['32','40','42','44'],c:2},
         {q:'Kho có 90 đơn vị nhiên liệu, rover dùng 35. Còn lại bao nhiêu?',a:['45','50','55','65'],c:2},
         {q:'Có 6 hộp linh kiện, mỗi hộp 8 món. Có tất cả bao nhiêu món?',a:['42','46','48','56'],c:2},
-        {q:'Pin 100 đơn vị được sạc thêm 25 rồi dùng 40. Còn lại bao nhiêu?',a:['75','80','85','90'],c:2}
+        {q:'Pin có 100 đơn vị, được sạc thêm 25 rồi dùng 40. Còn lại bao nhiêu?',a:['75','80','85','90'],c:2},
+        {q:'Ba robot mỗi robot cần 15 đơn vị điện. Cần bao nhiêu đơn vị cho cả ba?',a:['30','35','45','50'],c:2},
+        {q:'Một bình làm mát có 72 đơn vị, chia đều cho 8 khoang. Mỗi khoang nhận bao nhiêu?',a:['8','9','10','12'],c:1},
+        {q:'Rover đi được 4 km mỗi giờ. Trong 3 giờ, rover đi được bao xa?',a:['7 km','10 km','12 km','14 km'],c:2},
+        {q:'Kho có 120 linh kiện, đã dùng 1/4. Còn lại bao nhiêu?',a:['30','60','80','90'],c:3},
+        {q:'Hai tấm pin tạo ra 35 đơn vị và 28 đơn vị điện. Tổng là bao nhiêu?',a:['53','63','65','73'],c:1},
+        {q:'Một thiết bị tiêu thụ 6 đơn vị điện mỗi giờ. Sau 7 giờ tiêu thụ bao nhiêu?',a:['36','40','42','48'],c:2},
+        {q:'Có 96 đơn vị nhiên liệu chia thành 12 phần bằng nhau. Mỗi phần có bao nhiêu?',a:['6','8','9','12'],c:1}
       ],
       sequence:[
         {q:'Tìm số tiếp theo: 2, 4, 8, 16, ?',a:['24','30','32','36'],c:2},
         {q:'Tìm số tiếp theo: 5, 10, 15, 20, ?',a:['22','25','30','35'],c:1},
         {q:'Tìm số tiếp theo: 1, 4, 9, 16, ?',a:['20','24','25','36'],c:2},
         {q:'Tìm số tiếp theo: 30, 27, 24, 21, ?',a:['16','17','18','19'],c:2},
-        {q:'Tìm số tiếp theo: 1, 1, 2, 3, 5, ?',a:['6','7','8','10'],c:2}
+        {q:'Tìm số tiếp theo: 1, 1, 2, 3, 5, ?',a:['6','7','8','10'],c:2},
+        {q:'Tìm số tiếp theo: 3, 6, 9, 12, ?',a:['14','15','16','18'],c:1},
+        {q:'Tìm số tiếp theo: 100, 90, 80, 70, ?',a:['50','55','60','65'],c:2},
+        {q:'Tìm số tiếp theo: 2, 5, 8, 11, ?',a:['12','13','14','15'],c:2},
+        {q:'Tìm số tiếp theo: 1, 2, 4, 7, 11, ?',a:['14','15','16','17'],c:2},
+        {q:'Tìm số tiếp theo: 64, 32, 16, 8, ?',a:['2','4','6','12'],c:1},
+        {q:'Tìm số tiếp theo: 7, 14, 28, 56, ?',a:['84','98','112','120'],c:2},
+        {q:'Tìm số tiếp theo: 10, 13, 17, 22, 28, ?',a:['32','34','35','36'],c:2}
       ],
       circuit:[
         {q:'Cổng AND chỉ bật khi cả A và B đều ON. Nếu A=ON, B=OFF thì đầu ra là gì?',a:['ON','OFF','Chập chờn','Không xác định'],c:1},
         {q:'Cổng OR bật nếu ít nhất một đầu vào ON. A=OFF, B=ON thì đầu ra là gì?',a:['ON','OFF','Không xác định','Mất nguồn'],c:0},
         {q:'Một mạch NOT nhận đầu vào ON. Đầu ra sẽ là gì?',a:['ON','OFF','Cả hai','Không có đầu ra'],c:1},
         {q:'Hai công tắc mắc nối tiếp đều phải đóng để đèn sáng. Nếu một công tắc mở thì sao?',a:['Đèn sáng mạnh','Đèn tắt','Đèn nhấp nháy','Không đổi'],c:1},
-        {q:'Bộ phận nào thường lưu trữ năng lượng điện trong robot?',a:['Pin','Ăng-ten','Bánh xe','Camera'],c:0}
+        {q:'Bộ phận nào thường lưu trữ năng lượng điện trong robot?',a:['Pin','Ăng-ten','Bánh xe','Camera'],c:0},
+        {q:'Cổng AND có A=ON và B=ON. Đầu ra là gì?',a:['ON','OFF','Không xác định','Mất nguồn'],c:0},
+        {q:'Cổng OR có A=OFF và B=OFF. Đầu ra là gì?',a:['ON','OFF','Cả hai','Không xác định'],c:1},
+        {q:'Cổng NOT nhận đầu vào OFF. Đầu ra là gì?',a:['OFF','ON','Không xác định','Không có đầu ra'],c:1},
+        {q:'Trong mạch điện đơn giản, bộ phận nào dùng để đóng/ngắt dòng điện?',a:['Công tắc','Bánh xe','Ống kính','Ăng-ten'],c:0},
+        {q:'Mạch điện kín có tác dụng gì?',a:['Cho dòng điện chạy qua','Ngăn mọi dòng điện','Làm pin biến mất','Tắt nguồn vĩnh viễn'],c:0},
+        {q:'Nếu dây dẫn bị đứt, thiết bị thường sẽ thế nào?',a:['Hoạt động bình thường','Mất kết nối điện','Tự tăng năng lượng','Tăng tốc độ'],c:1},
+        {q:'Hai bóng đèn mắc song song: nếu một bóng hỏng, bóng còn lại thường thế nào?',a:['Vẫn có thể sáng','Chắc chắn tắt','Pin lập tức hết','Dây dẫn biến mất'],c:0}
       ],
       science:[
         {q:'Rover nào mang trực thăng Ingenuity đến Sao Hỏa?',a:['Curiosity','Perseverance','Spirit','Sojourner'],c:1},
@@ -693,18 +714,30 @@ def show_training_game(language="VI"):
         {q:'Rover nào hạ cánh xuống Sao Hỏa năm 1997?',a:['Sojourner','Perseverance','Curiosity','Opportunity'],c:0},
         {q:'Curiosity hạ cánh xuống Sao Hỏa vào năm nào?',a:['2004','2008','2012','2021'],c:2},
         {q:'Perseverance nghiên cứu và thu thập mẫu tại miệng núi lửa nào?',a:['Gale','Jezero','Valles Marineris','Olympus'],c:1},
-        {q:'Opportunity nổi tiếng vì điều gì?',a:['Hoạt động gần 15 năm','Bay quanh Sao Hỏa','Đưa người lên Sao Hỏa','Đáp xuống Mặt Trăng'],c:0}
+        {q:'Opportunity nổi tiếng vì điều gì?',a:['Hoạt động gần 15 năm','Bay quanh Sao Hỏa','Đưa người lên Sao Hỏa','Đáp xuống Mặt Trăng'],c:0},
+        {q:'Spirit và Opportunity thuộc chương trình rover nào?',a:['Mars Exploration Rover','Apollo','Voyager','Artemis'],c:0},
+        {q:'Curiosity khám phá khu vực nào trên Sao Hỏa?',a:['Miệng núi lửa Gale','Miệng núi lửa Jezero','Mặt Trăng','Sao Kim'],c:0},
+        {q:'Ingenuity là loại phương tiện nào?',a:['Tàu quỹ đạo','Trực thăng','Tàu đổ bộ có người','Vệ tinh liên lạc'],c:1},
+        {q:'Mục tiêu quan trọng của Perseverance là gì?',a:['Tìm dấu hiệu sự sống cổ đại','Đưa người lên Sao Hỏa','Khai thác vàng','Tạo khí quyển nhân tạo'],c:0},
+        {q:'Sojourner hoạt động trong sứ mệnh nào?',a:['Mars Pathfinder','Mars 2020','Viking 1','Apollo 11'],c:0},
+        {q:'Vì sao việc bay trên Sao Hỏa khó khăn?',a:['Khí quyển rất loãng','Không có trọng lực','Sao Hỏa không có ngày','Không có bụi'],c:0}
       ],
       wire:[
         {q:'Nối nguồn điện tới pin theo đường đi trên lưới 3×3.',route:[0,1,2,5,8]},
         {q:'Tìm đường dẫn điện từ góc trên trái tới góc dưới phải.',route:[0,3,4,7,8]},
         {q:'Nối mạch theo đường đi qua hàng trên rồi xuống thiết bị.',route:[0,1,2,5,8]},
         {q:'Dẫn điện qua cột bên trái rồi sang thiết bị ở góc dưới phải.',route:[0,3,6,7,8]},
-        {q:'Hoàn thành mạch bằng cách đi xuống giữa rồi sang phải.',route:[0,3,4,5,8]}
+        {q:'Hoàn thành mạch bằng cách đi xuống giữa rồi sang phải.',route:[0,3,4,5,8]},
+        {q:'Dẫn điện qua ô giữa hàng trên, sau đó đi xuống cạnh phải.',route:[0,1,4,5,8]},
+        {q:'Nối theo đường giữa: xuống một ô, sang phải, rồi xuống đích.',route:[0,3,4,5,8]},
+        {q:'Đưa điện men theo cạnh trái rồi đi qua hàng cuối.',route:[0,3,6,7,8]},
+        {q:'Chọn đường đi qua trung tâm lưới trước khi tới pin.',route:[0,1,4,7,8]},
+        {q:'Nối dây qua ô trên cùng ở giữa rồi đi thẳng xuống đích.',route:[0,1,4,5,8]}
       ]
     };
+    let questionPools={};
     function openSupplyStation(){panel.style.display='block';active=null;panel.innerHTML=`<h2>📡 TRẠM TIẾP TẾ SAO HỎA</h2><p>Chọn một thử thách để nhận tài nguyên. Mỗi lần vào thử thách sẽ có câu hỏi khác nhau.</p><p class="muted">⚠️ Nếu trả lời sai quá 3 lần trong cùng một câu hỏi, từ lần sai thứ 4 trở đi bạn sẽ mất 5 nhiên liệu cho mỗi lần sai.</p><div class="part"><b>🔌 Nối dây điện</b><p>Giải các sơ đồ mạch điện ngẫu nhiên.</p><button class="action" onclick="startPuzzle('wire')">BẮT ĐẦU</button></div><div class="part"><b>🧮 Toán năng lượng</b><p>Nhiều phép tính về pin và tài nguyên.</p><button class="action" onclick="startPuzzle('math')">BẮT ĐẦU</button></div><div class="part"><b>🔢 Giải mã dãy số</b><p>Tìm quy luật của các dãy số.</p><button class="action" onclick="startPuzzle('sequence')">BẮT ĐẦU</button></div><div class="part"><b>💡 Khởi động mạch logic</b><p>Thử thách tư duy về cổng logic và mạch điện.</p><button class="action" onclick="startPuzzle('circuit')">BẮT ĐẦU</button></div><div class="part"><b>🪐 Câu đố khoa học NASA</b><p>Khám phá các rover và sứ mệnh Sao Hỏa.</p><button class="action" onclick="startPuzzle('science')">BẮT ĐẦU</button></div><button class="action" onclick="closePanel()">RỜI TRẠM</button>`}
-    function startPuzzle(id){currentPuzzle=id;wireStep=0;wrongAttempts=0;const bank=questionBanks[id];currentQuestion=bank[Math.floor(Math.random()*bank.length)];let title=supplyPuzzles.find(x=>x.id===id).title,body='';if(id==='wire'){body=`<p>${currentQuestion.q} ⚡ bắt đầu ở ô 1, 🔋 là đích ở ô 9.</p><div class="puzzle-grid">${Array.from({length:9},(_,i)=>`<button id="wire${i}" onclick="wireClick(${i})">${i===0?'⚡':i===8?'🔋':'╋'}</button>`).join('')}</div><div class="puzzle-progress"><span id="wirebar"></span></div><p id="wirestatus" class="muted">Đã nối 0/${currentQuestion.route.length} điểm.</p>`}else{body=`<p>${currentQuestion.q}</p>${choiceButtons(currentQuestion.a,id)}`}panel.innerHTML=`<h2>${title}</h2><p class="muted">Câu hỏi mới · Số lần sai: <b id="wrongcount">0</b>/3 trước khi bị trừ nhiên liệu.</p>${body}<p id="penaltymsg" class="muted"></p><button class="action" onclick="openSupplyStation()">QUAY LẠI TRẠM</button>`}
+    function startPuzzle(id){currentPuzzle=id;wireStep=0;wrongAttempts=0;const bank=questionBanks[id];if(!questionPools[id]||questionPools[id].length===0){questionPools[id]=[...bank];for(let i=questionPools[id].length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[questionPools[id][i],questionPools[id][j]]=[questionPools[id][j],questionPools[id][i]];}}currentQuestion=questionPools[id].pop();let title=supplyPuzzles.find(x=>x.id===id).title,body='';if(id==='wire'){body=`<p>${currentQuestion.q} ⚡ bắt đầu ở ô 1, 🔋 là đích ở ô 9.</p><div class="puzzle-grid">${Array.from({length:9},(_,i)=>`<button id="wire${i}" onclick="wireClick(${i})">${i===0?'⚡':i===8?'🔋':'╋'}</button>`).join('')}</div><div class="puzzle-progress"><span id="wirebar"></span></div><p id="wirestatus" class="muted">Đã nối 0/${currentQuestion.route.length} điểm.</p>`}else{body=`<p>${currentQuestion.q}</p>${choiceButtons(currentQuestion.a,id)}`}panel.innerHTML=`<h2>${title}</h2><p class="muted">Câu hỏi mới · Số lần sai: <b id="wrongcount">0</b>/3 trước khi bị trừ nhiên liệu.</p>${body}<p id="penaltymsg" class="muted"></p><button class="action" onclick="openSupplyStation()">QUAY LẠI TRẠM</button>`}
     function choiceButtons(opts,id){return opts.map((v,i)=>`<button class="puzzle-choice" onclick="answerPuzzle('${id}',${i})">${String.fromCharCode(65+i)}. ${v}</button>`).join('')}
     function wrongAnswer(){wrongAttempts++;let penalty='';if(wrongAttempts>3){resources.fuel=Math.max(0,resources.fuel-5);updateHud();penalty=' Bạn bị trừ 5 nhiên liệu!';}let counter=document.getElementById('wrongcount');if(counter)counter.textContent=wrongAttempts;let msg=document.getElementById('penaltymsg');if(msg)msg.textContent='Bạn đã sai '+wrongAttempts+' lần.'+penalty;say('Chưa chính xác!'+penalty+' Hãy thử lại.');}
     function wireClick(i){const route=currentQuestion.route;if(i===route[wireStep]){document.getElementById('wire'+i).classList.add('done');document.getElementById('wire'+i).textContent=i===8?'🔋':'⚡';wireStep++;document.getElementById('wirebar').style.width=(wireStep/route.length*100)+'%';document.getElementById('wirestatus').textContent='Đã nối '+wireStep+'/'+route.length+' điểm.';if(wireStep===route.length)winPuzzle('wire')}else{wrongAnswer();wireStep=0;document.querySelectorAll('.puzzle-grid button').forEach((b,j)=>{b.classList.remove('done');b.textContent=j===0?'⚡':j===8?'🔋':'╋'});document.getElementById('wirebar').style.width='0%';document.getElementById('wirestatus').textContent='Sai đường dây! Mạch đã reset, hãy thử lại.'}}
